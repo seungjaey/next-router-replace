@@ -56,6 +56,7 @@ export default GoodsDetailPage
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context
   const { productCode } = query
+  console.log(`DEBUG : SERVER SIDE : ${productCode}`)
   return {
     props: {
       productCode,

@@ -3,21 +3,33 @@ import { useEffect } from 'react'
 import Router, { useRouter } from 'next/router'
 import type { AppProps } from 'next/app'
 
+const checkClientSide = () => {
+  try {
+    if (window) {
+      return true
+    }
+    return false
+  } catch (error) {
+    return false
+  }
+}
+
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter()
   const { isReady } = router
+  if (checkClientSide()) {
+    window.__NEXT_ROUTER__ = router
+  }
+
   useEffect(() => {
-    if (!isReady) {
-      return;
-    }
     Router.beforePopState(({ url, as, options }) => {
-      console.log(`DEBUG : BEFORE POP STATE`)
-      console.log(`${url} : ${as}`)
+      console.log(`DEBUG : BEFORE POP STATE : ${Router.pathname} => ${url}`)
       return true
     })
-  }, [isReady])
-  const handleRouteChangeStart = () => {
+  }, [])
+  const handleRouteChangeStart = (url: string) => {
     console.log(`DEBUG : handleRouteChangeStart`)
+    console.log(`${router.pathname} -> ${url}`);
   }
   const handleChangeComplete = () => {
     console.log(`DEBUG : handleChangeComplete`)
@@ -36,6 +48,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   }
 
   useEffect(() => {
+    if (!router.isReady) {
+      return;
+    }
     router.events.on('routeChangeStart', handleRouteChangeStart);
     router.events.on('routeChangeComplete', handleChangeComplete);
     router.events.on('routeChangeError', handleChangeError);
@@ -50,7 +65,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       router.events.off('hashChangeStart', handleChangeStart);
       router.events.off('hashChangeComplete', handleHashChangeComplete);
     };
-  }, [])
+  }, [router.isReady, router.pathname])
   return <Component {...pageProps} />
 }
 
