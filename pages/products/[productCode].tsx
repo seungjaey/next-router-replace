@@ -17,7 +17,7 @@ const TEST_LINKS = [
   },
 ]
 
-const GoodsDetailPage: NextPage = ({ productCode }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const ProductDetailPage: NextPage = ({ productCode }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const handleClickLink = (code: number) => () => {
     if (productCode === code) {
@@ -25,8 +25,8 @@ const GoodsDetailPage: NextPage = ({ productCode }: InferGetServerSidePropsType<
     }
     (async () => {
       await router.replace(
-        "/goods/[productCode]",
-        `/goods/${code}`
+        "/products/[productCode]",
+        `/products/${code}`
       )
     })()
   }
@@ -47,12 +47,12 @@ const GoodsDetailPage: NextPage = ({ productCode }: InferGetServerSidePropsType<
           })
         }
       </ul>
-      <IssueContent productCode={productCode} />
+      <IssueContent activeKey productCode={productCode} />
     </div>
   )
 }
 
-export default GoodsDetailPage
+export default ProductDetailPage
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context
